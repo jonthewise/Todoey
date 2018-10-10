@@ -12,9 +12,7 @@ import RealmSwift
 class TodoListViewController: UITableViewController {
     
     let realm = try! Realm()
-    
     var todoItems : Results<Item>?
-    //var itemArray = [Item]()
     
     var selectedCategory : Category? {
         didSet{
@@ -33,9 +31,7 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "toDoItemCell", for: indexPath)
-        
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
@@ -49,18 +45,15 @@ class TodoListViewController: UITableViewController {
     
     //MARK: - Tableview Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         if let item = todoItems?[indexPath.row] {
             do {
                 try realm.write {
                     item.done = !item.done
-//                    realm.delete(item)
                 }
             } catch {
                 print("Error saving item status, \(error)")
             }
         }
-
         tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -68,11 +61,9 @@ class TodoListViewController: UITableViewController {
     //MARK: - Add new items
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
-
         var textField = UITextField()
         let alert = UIAlertController(title: "Add new todoey Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-
             if let currentCategory = self.selectedCategory {
                 do {
                     try self.realm.write {
@@ -88,27 +79,18 @@ class TodoListViewController: UITableViewController {
                 self.tableView.reloadData()
             }
         }
-
-
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
         }
         alert.addAction(action)
-
         present(alert, animated: true, completion: nil)
-        
     }
-    
     
     func loadItems() {
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
-    
-  
-    
-    
 }
 
 //MARK: - Search bar methods
@@ -128,5 +110,4 @@ extension TodoListViewController: UISearchBarDelegate {
             }
         }
     }
-    
 }
